@@ -66,7 +66,7 @@ class TestInMemoryHandler:
         result = handler.calculate()
 
         # Assert
-        assert result.total == Decimal("10")
+        assert result.balance == Decimal("10")
 
     def test__calculate__should_return_average_credit(self):
         # Arrange
