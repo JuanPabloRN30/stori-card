@@ -4,6 +4,12 @@ from decimal import Decimal
 
 
 @dataclass
+class GenerateReportCommand:
+    filepath: str
+    receiver_email: str
+
+
+@dataclass
 class Transaction:
     id: int
     date: datetime

@@ -3,6 +3,6 @@ version: '3.9'
 services:
   report:
     build: .
-    env_file:
-      - .env
-    command: poetry run python main.py
+    environment:
+      - EMAIL_SENDER=${EMAIL_SENDER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
