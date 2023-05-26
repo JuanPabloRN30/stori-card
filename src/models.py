@@ -1,5 +1,5 @@
+import datetime
 from dataclasses import dataclass
-from datetime import datetime
 from decimal import Decimal
 
 
@@ -12,7 +12,7 @@ class GenerateReportCommand:
 @dataclass
 class Transaction:
     id: int
-    date: datetime
+    date: datetime.date
     amount: Decimal
     is_credit: bool
 
@@ -22,7 +22,7 @@ class Transaction:
         is_credit = amount[0] == "+"
         return cls(
             id=int(id),
-            date=datetime.strptime(date, "%m/%d"),
+            date=datetime.datetime.strptime(date, "%m/%d"),
             amount=Decimal(amount[1:]),
             is_credit=is_credit,
         )

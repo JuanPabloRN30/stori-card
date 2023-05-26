@@ -1,4 +1,5 @@
 import os
 
+DATABASE_URL = os.getenv("DATABASE_URL")
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
