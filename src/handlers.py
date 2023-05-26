@@ -7,7 +7,7 @@ from commands.create_tx_file import Transaction
 
 @dataclass
 class ReportResult:
-    total: Decimal
+    balance: Decimal
     average_credit: Decimal
     average_debit: Decimal
     n_transactions_per_month: list[int]
@@ -62,7 +62,7 @@ class InMemoryReportHandler(ReportHandler):
             self.__safe_division(total_debit_amount, total_transactions)
         )
         return ReportResult(
-            total=total_credit_amount - total_debit_amount,
+            balance=total_credit_amount - total_debit_amount,
             average_credit=average_credit,
             average_debit=average_debit,
             n_transactions_per_month=n_transactions_per_month,
