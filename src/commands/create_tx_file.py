@@ -1,9 +1,9 @@
 import datetime
 import random
-from dataclasses import dataclass
-from decimal import Decimal
 
 import click
+
+from models import Transaction
 
 UPPER_LIMIT = 10000
 
@@ -39,14 +39,6 @@ def create_tx_file(location: str, filename: str, n_credit: int, n_debit: int) ->
 def validate_upper_limit(value: int) -> None:
     if value >= UPPER_LIMIT:
         raise click.BadParameter(f"Value must be less than {UPPER_LIMIT}")
-
-
-@dataclass
-class Transaction:
-    id: int
-    date: datetime.datetime
-    amount: Decimal
-    is_credit: bool
 
 
 def generate_transactions(n_credit: int, n_debit: int) -> list[Transaction]:
