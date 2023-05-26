@@ -55,12 +55,16 @@ class InMemoryReportHandler(ReportHandler):
             total_debit_amount += month[self.SUM_DEBIT]
             total_credit_amount += month[self.SUM_CREDIT]
 
+        average_credit = self.__two_decimal_round(
+            self.__safe_division(total_credit_amount, total_transactions)
+        )
+        average_debit = self.__two_decimal_round(
+            self.__safe_division(total_debit_amount, total_transactions)
+        )
         return ReportResult(
             total=total_credit_amount - total_debit_amount,
-            average_credit=self.__safe_division(
-                total_credit_amount, total_transactions
-            ),
-            average_debit=self.__safe_division(total_debit_amount, total_transactions),
+            average_credit=average_credit,
+            average_debit=average_debit,
             n_transactions_per_month=n_transactions_per_month,
         )
 
@@ -68,3 +72,6 @@ class InMemoryReportHandler(ReportHandler):
         if b == 0:
             return Decimal("0")
         return a / b
+
+    def __two_decimal_round(self, value: Decimal) -> Decimal:
+        return Decimal(value).quantize(Decimal("0.01"))
