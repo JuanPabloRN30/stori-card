@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "stori-card"
+version = "0.1.0"
+description = ""
+authors = ["Juan Pablo Rodriguez <juanpablorn30@gmail.com>"]
+readme = "README.md"
+packages = [{include = "stori_card"}]
+
+[tool.poetry.dependencies]
+python = "3.11.3"
+click = "^8.1.3"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.270"
+black = "^23.3.0"
+pytest = "^7.3.1"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
