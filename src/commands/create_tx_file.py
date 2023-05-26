@@ -1,6 +1,7 @@
 import datetime
 import random
 from dataclasses import dataclass
+from decimal import Decimal
 
 import click
 
@@ -44,7 +45,7 @@ def validate_upper_limit(value: int) -> None:
 class Transaction:
     id: int
     date: datetime.datetime
-    amount: int
+    amount: Decimal
     is_credit: bool
 
 
