@@ -4,9 +4,11 @@ services:
   report:
     build: .
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=postgresql://postgres:postgres@database:5432/stori-card
       - EMAIL_SENDER=${EMAIL_SENDER}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+    depends_on:
+      - database
   database:
     image: postgres:latest
     environment:
