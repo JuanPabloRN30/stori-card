@@ -39,7 +39,6 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_DB: stori-card
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         # Set health checks to wait until postgres has started
