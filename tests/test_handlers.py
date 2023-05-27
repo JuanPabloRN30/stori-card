@@ -2,7 +2,8 @@ from datetime import datetime
 from decimal import Decimal
 
 from commands.create_tx_file import Transaction
-from handlers import InMemoryReportHandler
+from db import Transaction as TransactionModel
+from handlers import InMemoryReportHandler, SQLReportHandler
 
 
 def create_transaction(**kwargs) -> Transaction:
@@ -115,6 +116,85 @@ class TestInMemoryHandler:
     def test__safe_division__should_return_zero(self):
         # Arrange
         handler = InMemoryReportHandler()
+
+        # Act
+        result = handler.calculate()
+
+        # Assert
+        assert result.average_credit == Decimal("0")
+
+
+class TestSQLReportHandler:
+    def test__load__store_transaction(self, session):
+        # Arrange
+        handler = SQLReportHandler(session)
+        transaction = create_transaction()
+
+        # Act
+        handler.load(transaction)
+
+        # Assert
+        assert session.query(TransactionModel).count() == 1
+
+    def test__calculate__should_return_total(self, session):
+        # Arrange
+        handler = SQLReportHandler(session)
+        transaction = create_transaction()
+        handler.load(transaction)
+
+        # Act
+        result = handler.calculate()
+
+        # Assert
+        assert result.balance == Decimal("10")
+
+    def test__calculate__should_return_average_credit(self, session):
+        # Arrange
+        handler = SQLReportHandler(session)
+        transaction = create_transaction()
+        handler.load(transaction)
+        transaction = create_transaction(id=1, amount=Decimal("20"))
+        handler.load(transaction)
+
+        # Act
+        result = handler.calculate()
+
+        # Assert
+        assert result.average_credit == Decimal("15")
+
+    def test__calculate__should_return_average_debit(self, session):
+        # Arrange
+        handler = SQLReportHandler(session)
+        transaction = create_transaction(is_credit=False, amount=Decimal("20"))
+        handler.load(transaction)
+        transaction = create_transaction(id=1, is_credit=False, amount=Decimal("100"))
+        handler.load(transaction)
+
+        # Act
+        result = handler.calculate()
+
+        # Assert
+        assert result.average_debit == Decimal("60")
+
+    def test__calculate__should_return_n_transactions_per_month(self, session):
+        # Arrange
+        handler = SQLReportHandler(session)
+        transaction = create_transaction()
+        handler.load(transaction)
+
+        transaction = create_transaction(id=1, date=convert_str_to_date("12/01"))
+        handler.load(transaction)
+
+        # Act
+        result = handler.calculate()
+
+        # Assert
+        expected_result = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        assert result.n_transactions_per_month == expected_result
+
+    def test__safe_division__should_return_zero(self, session):
+        # Arrange
+        handler = SQLReportHandler(session)
 
         # Act
         result = handler.calculate()
