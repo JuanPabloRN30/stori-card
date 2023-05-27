@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from constants import DATABASE_URL
 
 engine = create_engine(DATABASE_URL, echo=True)
-SessionLocal = sessionmaker(bind=engine, autoflush=True, expire_on_commit=False)
+SessionLocal = sessionmaker(engine, autoflush=False, expire_on_commit=False)
 
 
 def get_session():
