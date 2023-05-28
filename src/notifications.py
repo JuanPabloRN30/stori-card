@@ -1,7 +1,6 @@
 import calendar
 from abc import ABC, abstractmethod
 
-from constants import EMAIL_PASSWORD, EMAIL_SENDER
 from emails import Email
 from handlers import ReportResult
 
@@ -13,8 +12,8 @@ class Notification(ABC):
 
 
 class EmailReportNotification(Notification):
-    def __init__(self, email_class: Email) -> None:
-        self.email: Email = email_class(EMAIL_SENDER, EMAIL_PASSWORD)
+    def __init__(self, email: Email) -> None:
+        self.email: Email = email
 
     def send(self, report_result: ReportResult, receivers: list[str]) -> None:
         subject = "Transaction Report"

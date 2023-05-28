@@ -9,6 +9,7 @@ services:
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
     depends_on:
       - database
+
   database:
     image: postgres:latest
     environment:

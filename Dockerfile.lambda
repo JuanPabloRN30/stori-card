@@ -1,0 +1,24 @@
+FROM public.ecr.aws/lambda/python:3.11-preview as base
+
+RUN yum update && yum install -y curl gcc python3-dev libpq-dev postgresql-dev musl-dev postgresql-devel
+
+ENV POETRY_VERSION=1.5.0
+
+# Install poetry
+RUN pip install "poetry==$POETRY_VERSION"
+
+WORKDIR /app
+# Copy only requirements to cache them in docker layer
+COPY poetry.lock pyproject.toml /app
+
+# Install dependencies
+RUN poetry export --without dev -f requirements.txt --without-hashes > requirements.txt
+RUN pip install -r requirements.txt -t ./bundle/
+
+FROM public.ecr.aws/lambda/python:3.11-preview
+
+COPY --from=base /app/bundle/ ${LAMBDA_TASK_ROOT}
+
+COPY src ${LAMBDA_TASK_ROOT}
+
+CMD ["lambda_app.lambda_handler"]

@@ -20,7 +20,7 @@ class FakeEmail(Email):
 class TestEmailReportNotification:
     def test__send(self):
         # Arrange
-        notification = EmailReportNotification(FakeEmail)
+        notification = EmailReportNotification(FakeEmail("", ""))
         report_result = ReportResult(
             balance=1000,
             average_debit=100,
