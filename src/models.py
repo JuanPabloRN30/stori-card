@@ -3,12 +3,14 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 
+# TODO: Change it to namedtuple
 @dataclass
 class GenerateReportCommand:
     filepath: str
     receiver_email: str
 
 
+# TODO: Change it to namedtuple
 @dataclass
 class Transaction:
     id: int

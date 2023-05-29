@@ -8,21 +8,38 @@ from handlers import ReportResult
 
 
 class Notification(ABC):
+    """Abstract class to send notifications."""
+
     @abstractmethod
     def send(self, report_result: ReportResult, receivers: list[str]) -> None:
-        pass
+        """Send a report notification."""
 
 
 class EmailReportNotification(Notification):
+    """Class to send report notifications using email."""
+
     def __init__(self, email: Email) -> None:
         self.email: Email = email
 
     def send(self, report_result: ReportResult, receivers: list[str]) -> None:
+        """Send a report notification."""
         subject = "Transaction Report"
         body = self.__render_template(report_result)
         self.email.send(subject, body, receivers)
 
-    def generate_email_body_kwargs(self, report_result: ReportResult) -> dict[str, str]:
+    def __render_template(self, report_result: ReportResult) -> str:
+        """Render the email template."""
+        env = Environment(
+            loader=FileSystemLoader(["./templates", "./src/templates"]),
+            autoescape=select_autoescape(),
+        )
+        template = env.get_template("report.html")
+        return template.render(**self.__generate_email_body_kwargs(report_result))
+
+    def __generate_email_body_kwargs(
+        self, report_result: ReportResult
+    ) -> dict[str, str]:
+        """Generate the keyword arguments for the email template."""
         n_transactions_per_month = []
         for month_number, transactions in enumerate(
             report_result.n_transactions_per_month
@@ -38,11 +55,3 @@ class EmailReportNotification(Notification):
             "average_credit": report_result.average_credit,
             "n_transactions_per_month": n_transactions_per_month,
         }
-
-    def __render_template(self, report_result: ReportResult) -> str:
-        env = Environment(
-            loader=FileSystemLoader(["./templates", "./src/templates"]),
-            autoescape=select_autoescape(),
-        )
-        template = env.get_template("report.html")
-        return template.render(**self.generate_email_body_kwargs(report_result))

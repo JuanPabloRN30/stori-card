@@ -18,7 +18,8 @@ ssm = boto3.client("ssm")
 EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
 
 
-def _get_ssm_parameter(name):
+def _get_ssm_parameter(name: str) -> str:
+    """Get a parameter from AWS SSM."""
     return ssm.get_parameter(Name=name, WithDecryption=True)["Parameter"]["Value"]
 
 
@@ -27,6 +28,11 @@ EMAIL_SENDER = _get_ssm_parameter(os.getenv("EMAIL_SENDER"))
 
 
 def lambda_handler(event, context):
+    """Lambda handler react to S3 events.
+
+    Download the file from S3, process it and send the report by email.
+    """
+
     bucket = event["Records"][0]["s3"]["bucket"]["name"]
     key = urllib.parse.unquote_plus(
         event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"

@@ -41,11 +41,13 @@ def create_tx_file(location: str, filename: str, n_credit: int, n_debit: int) ->
 
 
 def validate_upper_limit(value: int) -> None:
+    """Validate that the value is less than the upper limit."""
     if value >= UPPER_LIMIT:
         raise click.BadParameter(f"Value must be less than {UPPER_LIMIT}")
 
 
 def generate_transactions(n_credit: int, n_debit: int) -> list[Transaction]:
+    """Generate a list of random transactions."""
     START_DATE = datetime.datetime(2023, 1, 1)
     END_DATE = datetime.datetime(2023, 12, 31)
     transactions: list[Transaction] = []
@@ -67,12 +69,14 @@ def generate_transactions(n_credit: int, n_debit: int) -> list[Transaction]:
 def calculate_random_date(
     start_date: datetime.datetime, end_date: datetime.datetime
 ) -> datetime.datetime:
+    """Generate a random date between two dates."""
     return start_date + datetime.timedelta(
         seconds=random.randint(0, int((end_date - start_date).total_seconds())),
     )
 
 
 def calculate_random_amount(low: int = 1, high: int = 200) -> int:
+    """Generate a random amount between two values."""
     return random.randint(low, high)
 
 
