@@ -1,20 +1,11 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from decimal import Decimal
 
 from sqlalchemy import text
 
 from commands.create_tx_file import Transaction
 from db import Transaction as TransactionModel
-
-
-# TODO: CHANGE IT TO NAMEDTUPLE
-@dataclass
-class ReportResult:
-    balance: Decimal
-    average_credit: Decimal
-    average_debit: Decimal
-    n_transactions_per_month: list[int]
+from models import ReportResult
 
 
 class ReportHandler(ABC):

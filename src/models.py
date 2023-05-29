@@ -1,22 +1,18 @@
 import datetime
-from dataclasses import dataclass
+from collections import namedtuple
 from decimal import Decimal
 
+GenerateReportCommand = namedtuple(
+    "GenerateReportCommand", ["filepath", "receiver_email"]
+)
+ReportResult = namedtuple(
+    "ReportResult",
+    ["balance", "average_credit", "average_debit", "n_transactions_per_month"],
+)
 
-# TODO: Change it to namedtuple
-@dataclass
-class GenerateReportCommand:
-    filepath: str
-    receiver_email: str
 
-
-# TODO: Change it to namedtuple
-@dataclass
-class Transaction:
-    id: int
-    date: datetime.date
-    amount: Decimal
-    is_credit: bool
+class Transaction(namedtuple("Transaction", ["id", "date", "amount", "is_credit"])):
+    __slots__ = ()
 
     @classmethod
     def from_csv(cls, csv_line: str):
