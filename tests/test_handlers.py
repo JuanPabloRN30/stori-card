@@ -4,6 +4,7 @@ from decimal import Decimal
 from commands.create_tx_file import Transaction
 from db import Transaction as TransactionModel
 from handlers import InMemoryReportHandler, SQLReportHandler
+from models import ReportInformationPerMonth
 
 
 def create_transaction(**kwargs) -> Transaction:
@@ -31,7 +32,7 @@ class TestInMemoryHandler:
         handler.load(transaction)
 
         # Assert
-        assert handler.result[0][0] == 1
+        assert handler.result["January"][0] == 1
 
     def test__load__should_increase_sum_credit(self):
         # Arrange
@@ -42,8 +43,8 @@ class TestInMemoryHandler:
         handler.load(transaction)
 
         # Assert
-        assert handler.result[0][1] == 10
-        assert handler.result[0][2] == 0
+        assert handler.result["January"][1] == 10
+        assert handler.result["January"][2] == 0
 
     def test__load__should_increase_sum_debit(self):
         # Arrange
@@ -54,8 +55,8 @@ class TestInMemoryHandler:
         handler.load(transaction)
 
         # Assert
-        assert handler.result[0][2] == 10
-        assert handler.result[0][1] == 0
+        assert handler.result["January"][2] == 10
+        assert handler.result["January"][1] == 0
 
     def test__calculate__should_return_total(self):
         # Arrange
@@ -97,7 +98,7 @@ class TestInMemoryHandler:
         # Assert
         assert result.average_debit == Decimal("60")
 
-    def test__calculate__should_return_n_transactions_per_month(self):
+    def test__calculate__should_return_information_per_month(self):
         # Arrange
         handler = InMemoryReportHandler()
         transaction = create_transaction()
@@ -110,8 +111,21 @@ class TestInMemoryHandler:
         result = handler.calculate()
 
         # Assert
-        expected_result = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-        assert result.n_transactions_per_month == expected_result
+        expected_result = [
+            ReportInformationPerMonth(
+                month="January",
+                average_credit=Decimal("10"),
+                average_debit=Decimal("0"),
+                n_transactions=1,
+            ),
+            ReportInformationPerMonth(
+                month="December",
+                average_credit=Decimal("10"),
+                average_debit=Decimal("0"),
+                n_transactions=1,
+            ),
+        ]
+        assert result.information_per_month == expected_result
 
     def test__safe_division__should_return_zero(self):
         # Arrange
@@ -189,8 +203,21 @@ class TestSQLReportHandler:
         result = handler.calculate()
 
         # Assert
-        expected_result = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-        assert result.n_transactions_per_month == expected_result
+        expected_result = [
+            ReportInformationPerMonth(
+                month="January",
+                average_credit=Decimal("10"),
+                average_debit=Decimal("0"),
+                n_transactions=1,
+            ),
+            ReportInformationPerMonth(
+                month="December",
+                average_credit=Decimal("10"),
+                average_debit=Decimal("0"),
+                n_transactions=1,
+            ),
+        ]
+        assert result.information_per_month == expected_result
 
     def test__safe_division__should_return_zero(self, session):
         # Arrange
