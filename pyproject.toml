@@ -12,6 +12,7 @@ click = "^8.1.3"
 sqlalchemy = "^2.0.15"
 alembic = "^1.11.1"
 psycopg2 = "^2.9.6"
+boto3 = "^1.26.142"
 
 
 [tool.poetry.group.dev.dependencies]
