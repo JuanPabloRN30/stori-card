@@ -5,9 +5,14 @@ from decimal import Decimal
 GenerateReportCommand = namedtuple(
     "GenerateReportCommand", ["filepath", "receiver_email"]
 )
+
+ReportInformationPerMonth = namedtuple(
+    "ReportInformationPerMonth",
+    ["month", "average_credit", "average_debit", "n_transactions"],
+)
 ReportResult = namedtuple(
     "ReportResult",
-    ["balance", "average_credit", "average_debit", "n_transactions_per_month"],
+    ["balance", "average_credit", "average_debit", "information_per_month"],
 )
 
 

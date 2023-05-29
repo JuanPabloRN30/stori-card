@@ -1,4 +1,3 @@
-import calendar
 from abc import ABC, abstractmethod
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -40,18 +39,19 @@ class EmailReportNotification(Notification):
         self, report_result: ReportResult
     ) -> dict[str, str]:
         """Generate the keyword arguments for the email template."""
-        n_transactions_per_month = []
-        for month_number, transactions in enumerate(
-            report_result.n_transactions_per_month
-        ):
-            if transactions == 0:
+        information_per_month = {}
+        for report_information_per_month in report_result.information_per_month:
+            if report_information_per_month.n_transactions == 0:
                 continue
 
-            month_name = calendar.month_name[month_number + 1]
-            n_transactions_per_month.append((month_name, transactions))
+            information_per_month[report_information_per_month.month] = {
+                "average_credit": report_information_per_month.average_credit,
+                "average_debit": report_information_per_month.average_debit,
+                "n_transactions": report_information_per_month.n_transactions,
+            }
         return {
             "balance": report_result.balance,
             "average_debit": report_result.average_debit,
             "average_credit": report_result.average_credit,
-            "n_transactions_per_month": n_transactions_per_month,
+            "information_per_month": information_per_month,
         }

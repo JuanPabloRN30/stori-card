@@ -1,11 +1,13 @@
+import calendar
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from decimal import Decimal
 
 from sqlalchemy import text
 
 from commands.create_tx_file import Transaction
 from db import Transaction as TransactionModel
-from models import ReportResult
+from models import ReportInformationPerMonth, ReportResult
 
 
 class ReportHandler(ABC):
@@ -39,33 +41,45 @@ class InMemoryReportHandler(ReportHandler):
 
     def __init__(self):
         """Initialize the handler."""
-        self.result = [[0 for _ in range(3)] for _ in range(12)]
+        self.result = defaultdict(lambda: [0, Decimal("0"), Decimal("0")])
 
     def load(self, transaction: Transaction):
         """Load a transaction into the handler."""
-        self.result[transaction.date.month - 1][self.N_TRANSACTIONS] += 1
+
+        month_name = calendar.month_name[transaction.date.month]
+        self.result[month_name][self.N_TRANSACTIONS] += 1
         if transaction.is_credit:
-            self.result[transaction.date.month - 1][
-                self.SUM_CREDIT
-            ] += transaction.amount
+            self.result[month_name][self.SUM_CREDIT] += transaction.amount
         else:
-            self.result[transaction.date.month - 1][
-                self.SUM_DEBIT
-            ] += transaction.amount
+            self.result[month_name][self.SUM_DEBIT] += transaction.amount
 
     def calculate(self) -> ReportResult:
         """Calculate the report."""
-        n_transactions_per_month = []
+        information_per_month: list[ReportInformationPerMonth] = []
         total_transactions = 0
         total_debit_amount = Decimal("0")
         total_credit_amount = Decimal("0")
-        for month in self.result:
-            month_transactions = month[self.N_TRANSACTIONS]
-            n_transactions_per_month.append(month_transactions)
+        for month, month_info in self.result.items():
+            month_transactions, credit, debit = month_info
+
+            average_credit_per_month = self._two_decimal_round(
+                self._safe_division(credit, month_transactions)
+            )
+            average_debit_per_month = self._two_decimal_round(
+                self._safe_division(debit, month_transactions)
+            )
+            information_per_month.append(
+                ReportInformationPerMonth(
+                    month=month,
+                    average_credit=average_credit_per_month,
+                    average_debit=average_debit_per_month,
+                    n_transactions=month_transactions,
+                )
+            )
 
             total_transactions += month_transactions
-            total_debit_amount += month[self.SUM_DEBIT]
-            total_credit_amount += month[self.SUM_CREDIT]
+            total_debit_amount += debit
+            total_credit_amount += credit
 
         average_credit = self._two_decimal_round(
             self._safe_division(total_credit_amount, total_transactions)
@@ -77,7 +91,7 @@ class InMemoryReportHandler(ReportHandler):
             balance=total_credit_amount - total_debit_amount,
             average_credit=average_credit,
             average_debit=average_debit,
-            n_transactions_per_month=n_transactions_per_month,
+            information_per_month=information_per_month,
         )
 
 
@@ -110,15 +124,32 @@ class SQLReportHandler(ReportHandler):
             sum( CASE WHEN NOT is_credit THEN amount ELSE 0 END ) as sum_debit
         FROM transactions
         GROUP BY month
+        ORDER BY month;
         """
         results = self.session.execute(text(calculate_query))
 
-        n_transactions_per_month = [0] * 12
+        information_per_month: list[ReportInformationPerMonth] = []
         total_transactions = 0
         total_credit_amount = Decimal("0")
         total_debit_amount = Decimal("0")
         for transaction_date, n_transactions, sum_credit, sum_debit in results:
-            n_transactions_per_month[transaction_date.month - 1] = n_transactions
+            average_credit_per_month = self._two_decimal_round(
+                self._safe_division(sum_credit, n_transactions)
+            )
+            average_debit_per_month = self._two_decimal_round(
+                self._safe_division(sum_debit, n_transactions)
+            )
+
+            month_name = calendar.month_name[transaction_date.month]
+            information_per_month.append(
+                ReportInformationPerMonth(
+                    month=month_name,
+                    average_credit=average_credit_per_month,
+                    average_debit=average_debit_per_month,
+                    n_transactions=n_transactions,
+                )
+            )
+
             total_transactions += n_transactions
             total_credit_amount += sum_credit
             total_debit_amount += sum_debit
@@ -133,5 +164,5 @@ class SQLReportHandler(ReportHandler):
             balance=total_credit_amount - total_debit_amount,
             average_credit=average_credit,
             average_debit=average_debit,
-            n_transactions_per_month=n_transactions_per_month,
+            information_per_month=information_per_month,
         )
