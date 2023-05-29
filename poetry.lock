@@ -231,6 +231,23 @@ plugins = ["setuptools"]
 requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
 [[package]]
+name = "jinja2"
+version = "3.1.2"
+description = "A very fast and expressive template engine."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
+    {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
+]
+
+[package.dependencies]
+MarkupSafe = ">=2.0"
+
+[package.extras]
+i18n = ["Babel (>=2.7)"]
+
+[[package]]
 name = "jmespath"
 version = "1.0.1"
 description = "JSON Matching Expressions"
@@ -718,4 +735,4 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11.3"
-content-hash = "09654404b7a321e20e575fe2a8797457c4f24465777ee68c72408d9e17e6f4cf"
+content-hash = "9195650ba467dbbb72e1c3cf68503d72fe1e847183e249e2b6f22a5aa8c01ce7"

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,700;1,400;1,700&display=swap" rel="stylesheet">
+</head>
+<body style="font-family: 'Rubik', sans-serif; background-color: #f6f8fb; padding-bottom: 10px;">
+    <div style="padding: 20px;">
+        <img
+            src="https://stori-card-assets.s3.amazonaws.com/logo.png"
+            alt="storicard logo"
+            style="width: 155px; height: 48px;"
+        />
+    </div>
+    <div style="background-color: #ffffff; margin: 10px; padding: 15px;">
+        <div>
+            <h2 style="color: #384967; font-family: 'Rubik', sans-serif;">
+                We get your transactions, this is the
+                <span style="color: #00c7b1">summary</span>:
+            </h2>
+        </div>
+        <div>
+            <img
+                src="https://stori-card-assets.s3.amazonaws.com/bullet.png"
+                alt="bullet"
+                style="width: 20px; height: 20px; vertical-align: middle;"
+            />
+            <p style="display: inline-block; font-family: 'Rubik', sans-serif;">
+                <b>Total balance:</b> {{ balance }}
+            </p>
+        </div>
+
+        <div>
+            <img
+                src="https://stori-card-assets.s3.amazonaws.com/bullet.png"
+                alt="bullet"
+                style="width: 20px; height: 20px; vertical-align: middle;"
+            />
+            <p style="display: inline-block; font-family: 'Rubik', sans-serif;">
+                <b>Average debit amount:</b> {{ average_debit }}
+            </p>
+        </div>
+
+        <div>
+            <img
+                src="https://stori-card-assets.s3.amazonaws.com/bullet.png"
+                alt="bullet"
+                style="width: 20px; height: 20px; vertical-align: middle;"
+            />
+            <p style="display: inline-block; font-family: 'Rubik', sans-serif;">
+                <b>Average credit amount:</b> {{ average_credit }}
+            </p>
+        </div>
+
+        <div>
+        <h3 style="color: #384967; font-family: 'Rubik', sans-serif;">
+            Transactions per <b>month</b>:
+        </h3>
+        {% for month_name, transactions in n_transactions_per_month %}
+            <p>- <b>{{ month_name }}:</b> {{ transactions }} </p>
+        {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
