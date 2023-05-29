@@ -1,6 +1,6 @@
 variable "email_receiver" {
-    type      = string
-    sensitive = true
+  type      = string
+  sensitive = true
 }
 
 variable "email_sender" {
