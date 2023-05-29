@@ -13,6 +13,7 @@ from process import process_transaction_file
 @click.argument("filepath", type=click.Path(exists=True))
 @click.argument("email", type=click.STRING)
 def send_report(filepath: str, email: str) -> None:
+    """Command to process a transaction file and send the report by email."""
     command = GenerateReportCommand(filepath=filepath, receiver_email=email)
     email = Email(EMAIL_SENDER, EMAIL_PASSWORD)
 

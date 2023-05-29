@@ -8,6 +8,7 @@ from commands.create_tx_file import Transaction
 from db import Transaction as TransactionModel
 
 
+# TODO: CHANGE IT TO NAMEDTUPLE
 @dataclass
 class ReportResult:
     balance: Decimal
@@ -17,32 +18,40 @@ class ReportResult:
 
 
 class ReportHandler(ABC):
+    """Abstract class to handle the report."""
+
     @abstractmethod
     def load(self, transaction: Transaction):
-        pass
+        """Load a transaction into the handler."""
 
     @abstractmethod
     def calculate(self) -> ReportResult:
-        pass
+        """Calculate the report."""
 
     def _safe_division(self, a: Decimal, b: Decimal) -> Decimal:
+        """Safely divide two numbers."""
         if b == 0:
             return Decimal("0")
         return a / b
 
     def _two_decimal_round(self, value: Decimal) -> Decimal:
+        """Round a number to two decimal places."""
         return Decimal(value).quantize(Decimal("0.01"))
 
 
 class InMemoryReportHandler(ReportHandler):
+    """In memory report handler."""
+
     N_TRANSACTIONS = 0
     SUM_CREDIT = 1
     SUM_DEBIT = 2
 
     def __init__(self):
+        """Initialize the handler."""
         self.result = [[0 for _ in range(3)] for _ in range(12)]
 
     def load(self, transaction: Transaction):
+        """Load a transaction into the handler."""
         self.result[transaction.date.month - 1][self.N_TRANSACTIONS] += 1
         if transaction.is_credit:
             self.result[transaction.date.month - 1][
@@ -54,6 +63,7 @@ class InMemoryReportHandler(ReportHandler):
             ] += transaction.amount
 
     def calculate(self) -> ReportResult:
+        """Calculate the report."""
         n_transactions_per_month = []
         total_transactions = 0
         total_debit_amount = Decimal("0")
@@ -81,10 +91,14 @@ class InMemoryReportHandler(ReportHandler):
 
 
 class SQLReportHandler(ReportHandler):
+    """SQL report handler."""
+
     def __init__(self, session):
+        """Initialize the handler."""
         self.session = session
 
     def load(self, transaction: Transaction):
+        """Load a transaction into the handler."""
         self.session.add(
             TransactionModel(
                 id=transaction.id,
@@ -96,6 +110,8 @@ class SQLReportHandler(ReportHandler):
         self.session.flush()
 
     def calculate(self) -> ReportResult:
+        """Calculate the report."""
+
         calculate_query = """
         SELECT date_trunc('month', date) as month,
             count(*) as n_transactions,

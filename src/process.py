@@ -6,6 +6,7 @@ from notifications import Notification
 
 
 def read_transaction_file(filepath: str) -> Generator[str, None, None]:
+    """Read a transaction file and yield each line."""
     with open(filepath, "r") as file:
         file.readline()  # skip header
         for line in file.readlines():
@@ -17,6 +18,7 @@ def process_transaction_file(
     notification_service: Notification,
     command: GenerateReportCommand,
 ) -> None:
+    """Process a transaction file and send a report notification."""
     # Load transactions
     for line in read_transaction_file(command.filepath):
         transaction = Transaction.from_csv(line)
