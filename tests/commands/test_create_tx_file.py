@@ -5,22 +5,27 @@ from click.testing import CliRunner
 from commands.create_tx_file import create_tx_file
 
 
-def test_create_tx_file(tmp_path):
+def test_create_tx_file():
+    # Arrange
     runner = CliRunner()
-    with runner.isolated_filesystem(tmp_path):
-        result = runner.invoke(
-            create_tx_file,
-            [
-                "--location",
-                tmp_path,
-                "--filename",
-                "test.csv",
-                "--n_credit",
-                2,
-                "--n_debit",
-                2,
-            ],
-        )
+
+    # Act
+    result = runner.invoke(
+        create_tx_file,
+        [
+            "--filename",
+            "test.csv",
+            "--n_credit",
+            2,
+            "--n_debit",
+            2,
+        ],
+    )
+
+    # Assert
     assert result.exit_code == 0
-    assert result.output == f"File {tmp_path}/test.csv generated!\n"
-    assert os.path.exists(f"{tmp_path}/test.csv")
+    assert result.output == "File ./tx_files/test.csv generated!\n"
+    assert os.path.exists("./tx_files/test.csv")
+
+    # Cleanup
+    os.remove("./tx_files/test.csv")

@@ -11,4 +11,8 @@ COPY poetry.lock pyproject.toml /app/
 RUN poetry install
 
 COPY ./src /app/
+COPY ./migrations /app/migrations
+COPY alembic.ini /app/alembic.ini
 COPY ./tx_files /app/tx_files
+
+ENTRYPOINT ["poetry", "run"]

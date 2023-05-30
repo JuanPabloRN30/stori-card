@@ -7,6 +7,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@database:5432/stori-card
       - EMAIL_SENDER=${EMAIL_SENDER}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+    volumes:
+      - ./tx_files:/app/tx_files
     depends_on:
       - database
 
