@@ -41,7 +41,12 @@
                 style="width: 20px; height: 20px; vertical-align: middle;"
             />
             <p style="display: inline-block; font-family: 'Rubik', sans-serif;">
-                <b>Average debit amount:</b> -${{ average_debit }}
+                <b>Average debit amount:</b>
+                {% if average_debit > 0 %}
+                    -${{ average_debit }}
+                {% else %}
+                    ${{ average_debit }}
+                {% endif %}
             </p>
         </div>
 
@@ -78,7 +83,11 @@
                         <b>{{ month_name }}</b>
                     </td>
                     <td style="padding: 8px 4px;">${{ information["average_credit"] }}</td>
-                    <td style="padding: 8px 4px;">-${{ information["average_debit"] }}</td>
+                    {% if information["average_debit"] > 0 %}
+                        <td style="padding: 8px 4px;">-${{ information["average_debit"] }}</td>
+                    {% else %}
+                        <td style="padding: 8px 4px;">${{ information["average_debit"] }}</td>
+                    {% endif %}
                     <td style="padding: 8px 4px;">{{ information["n_transactions"] }}</td>
                 </tr>
                 {% endfor %}

@@ -9,7 +9,6 @@ UPPER_LIMIT = 10000
 
 
 @click.command()
-@click.option("--location", help="Destination folder of the file.")
 @click.option("--filename", help="Name of the file.")
 @click.option(
     "--n_credit", default=1, help="Number of credit transactions.", type=click.INT
@@ -17,14 +16,12 @@ UPPER_LIMIT = 10000
 @click.option(
     "--n_debit", default=1, help="Number of debit transactions.", type=click.INT
 )
-def create_tx_file(location: str, filename: str, n_credit: int, n_debit: int) -> None:
+def create_tx_file(filename: str, n_credit: int, n_debit: int) -> None:
     """Generate a CSV file with random transactions."""
     validate_upper_limit(n_credit)
     validate_upper_limit(n_debit)
 
-    if not location:
-        location = "./tx_files"
-
+    location = "./tx_files"
     if not filename:
         filename = "tx_file.csv"
 
