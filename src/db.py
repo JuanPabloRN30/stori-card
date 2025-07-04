@@ -1,12 +1,19 @@
 import datetime
 from decimal import Decimal
 
-from sqlalchemy import DECIMAL, Boolean, Date, Integer, Uuid
+from sqlalchemy import DECIMAL, Boolean, Date, DateTime, Integer, Uuid, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
     """Base class for all models."""
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime,
+        default=datetime.datetime.utcnow,
+        server_default=func.now(),
+        nullable=False,
+    )
 
 
 class Transaction(Base):
